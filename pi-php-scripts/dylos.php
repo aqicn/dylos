@@ -48,7 +48,6 @@ class DylosMonitor
 
 	function upload( $v1, $v2 )
 	{
-		$iDylosReaderConf::$sensorId ;
 		$url = "http://aqicn.info/sensor/";
 
 		$time = time();
@@ -60,8 +59,11 @@ class DylosMonitor
         $post = array( 
         		"key"=>DylosReaderConf::$sensorKey,
         		"id"=>DylosReaderConf::$sensorId,
+        		/* For server backward compatiblity */
+        		"clientVersion"=>2,
         		/* Memory information is sent to track memory leaks */
                 "mem"=>memory_get_usage(), 
+                
         		"data"=>$data,
                 );
 ^
@@ -81,8 +83,16 @@ class DylosMonitor
 			if (file_exists($filename))
 			{
 				$data= json_decode(file_get_contents($filename));
-				$post = array( "key"=>"abc","id"=>$id,"data"=>$data );
-				$res = syncPost($url,json_encode($post));
+				$post = array( 
+	        		"key"=>DylosReaderConf::$sensorKey,
+	        		"id"=>DylosReaderConf::$sensorId,
+	        		/* For server backward compatiblity */
+	        		"clientVersion"=>2,
+	        		/* Memory information is sent to track memory leaks */
+	                "mem"=>memory_get_usage(), 
+					"data"=>$data 
+					);
+				$res = Http::post($url,json_encode($post));
 				$this->log("Reposting '...' -> $res");
 				unlink($filename);
 			}

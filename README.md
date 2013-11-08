@@ -10,7 +10,7 @@ Preconditions
 
 In order to run the dylos experiment, you will need the following Hardware:
 
-- Dylos DC1100 pro, with Serial Interface
+- Dylos DC1100 pro, with Serial Interface (or DC1700)
 - Raspbery PI
 - USB to serial cable
 
@@ -24,15 +24,17 @@ Installation
 
 Copy the content of the folder ```php-scripts``` to the local folder, and edit the file ```conf.php```:
 
-- Edit the line ```static var $sensorId = "xxx";``` and replace ```xxx``` with your ID. You can use any ID, and we suggest you use your email address, or anything similar that can uniquely identify yourself. 
+- Edit the line ```static $sensorId = "xxx";``` and replace ```xxx``` with your ID. You can use any ID, and we suggest you use your email address, or anything similar that can uniquely identify yourself. 
 
-- If needed, edit the line ```static var $serialPort  = "/dev/ttyUSB0";```, and replace the ```/dev/ttyUSB0``` with your serial port configuration.
+- If needed, edit the line ```static $serialPort  = "/dev/ttyUSB0";```, and replace the ```/dev/ttyUSB0``` with your serial port configuration.
 
 
 Running the scripts
 ----
 
 ``cd`` to the PHP script directory, and then just run ```php main.php```.
+
+If you encounter problem with the ```openbase_dir``` such as "PHP Warning:  fopen(): open_basedir restriction in effect", you can use the command line ```php -d open_basedir=none main.php``` instead. 
 
 If you want the dylos script to be started automatically during PI boot strap, just ```sudo vi /etc/rc.local``` and add line ```nohup php /path-to-your-dylos-script/main.php > /dev/null 2>&1&``` at the end of the file
 

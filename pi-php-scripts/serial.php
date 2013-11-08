@@ -176,7 +176,7 @@ class phpSerial
                         return false;
                 }
 
-                $this->_dHandle = @fopen($this->_device, $mode);
+                $this->_dHandle = fopen($this->_device, $mode);
 
                 if ($this->_dHandle !== false)
                 {
