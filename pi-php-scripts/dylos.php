@@ -52,34 +52,33 @@ class DylosMonitor
 
 		$time = time();
 		$data = array(
-					array("t"=>$time,"v"=>$v1,"id"=>1),
-					array("t"=>$time,"v"=>$v2,"id"=>2)
-					);
+			array("t"=>$time,"v"=>$v1,"id"=>1),
+			array("t"=>$time,"v"=>$v2,"id"=>2)
+			);
 
-        $post = array( 
+        	$post = array( 
         		"key"=>DylosReaderConf::$sensorKey,
         		"id"=>DylosReaderConf::$sensorId,
         		/* For server backward compatiblity */
         		"clientVersion"=>2,
         		/* Memory information is sent to track memory leaks */
-                "mem"=>memory_get_usage(), 
-                
+                	"mem"=>memory_get_usage(), 
         		"data"=>$data,
                 );
-^
 
 		$res = Http::post($url,json_encode($post));
+		$json = json_decode($res); 
 
 		$filename = "/tmp/upload.pending.json";
-		if ($res!="ok")
+		if (!isset($json->result) || $json->result!="ok")
 		{
-			$this->log("Postponning '".json_encode($post)."' -> $res");
-    		$list = file_exists($filename)?json_decode(file_get_contents($filename)):array();
-		    file_put_contents($filename,json_encode(array_merge($list,$data)));
+			$this->log("Postponning '".json_encode($post)."'\nServer says '$res'\n");
+    			$list = file_exists($filename)?json_decode(file_get_contents($filename)):array();
+			file_put_contents($filename,json_encode(array_merge($list,$data)));
 		}
 		else
 		{
-			$this->log("Posted '".json_encode($post)."' -> $res");
+			$this->log("Posted '".json_encode($post)."'.\nServer said '$res'\n");
 			if (file_exists($filename))
 			{
 				$data= json_decode(file_get_contents($filename));
@@ -89,11 +88,11 @@ class DylosMonitor
 	        		/* For server backward compatiblity */
 	        		"clientVersion"=>2,
 	        		/* Memory information is sent to track memory leaks */
-	                "mem"=>memory_get_usage(), 
-					"data"=>$data 
-					);
+	                	"mem"=>memory_get_usage(), 
+				"data"=>$data 
+				);
 				$res = Http::post($url,json_encode($post));
-				$this->log("Reposting '...' -> $res");
+				$this->log("Reposting ... Server says '$res'\n");
 				unlink($filename);
 			}
 		}
