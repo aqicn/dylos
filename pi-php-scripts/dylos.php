@@ -102,7 +102,10 @@ class DylosMonitor
 		$res = Http::post($url,json_encode($post));
 		$json = json_decode($res); 
 
-		$filename = "/tmp/upload.dylos.pending.json";
+		$path = realpath(dirname(__FILE__))."/logs/";
+		mkdir($path);
+		$filename = $path."upload.dylos.pending.json";
+		
 		if (!isset($json->result) || $json->result!="ok")
 		{
 			$this->log("Postponning '".json_encode($post)."'\nServer says '$res'\n");
@@ -134,8 +137,6 @@ class DylosMonitor
 					if ($this->retryUpload<3) return;
 
 					$time = time();
-					$path = realpath(dirname(__FILE__))."/logs/";
-					mkdir($path);
 					$tmpfile = $path."errlog.dylos.failed.".$time;
 					file_put_contents($tmpfile,$res);
 					$tmpfile = $path."upload.dylos.failed.".$time;
